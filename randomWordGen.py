@@ -1,5 +1,7 @@
 import random
 
+
+
 def generateWord():
 
   generate = True
@@ -11,5 +13,5 @@ def generateWord():
   
       # print random string 
       currentWord = random.choice(words)
-      print(currentWord)
       generate = False
+      return currentWord

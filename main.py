@@ -1,13 +1,28 @@
 import pygame
-import random
-from randomWordGen import generateWord
-
-generate = True
+from randomWordGen import *
 
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((400, 300))
-pygame.display.set_caption('Hello World!')
+screen = pygame.display.set_mode((400, 300))
+pygame.display.set_caption('Monster Hunter')
      
-generateWord()
-         
-pygame.display.update()
+def main():
+
+  currentWord = generateWord()
+  print(currentWord)
+
+  inputText = input()
+
+  if inputText == currentWord:
+    currentWord = ''
+    print("Correct!")
+
+  if inputText != currentWord:
+    currentWord =''
+    print("Loser")
+    
+           
+  pygame.display.update()
+
+if __name__ == "__main__":
+ while True:
+    main()
