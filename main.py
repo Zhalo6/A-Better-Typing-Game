@@ -5,6 +5,7 @@ from randomWordGen import *
 pygame.init()
 screen = pygame.display.set_mode((400, 300))
 pygame.display.set_caption('Monster Hunter')
+bgColour = 'blue'
 
 class Hitbox(object):
   def __init__(self, rect_x, rect_y, rect_width, rect_height, text):
@@ -16,16 +17,17 @@ class Hitbox(object):
     self.font = pygame.freetype.SysFont('Arial', 25)
 
   def draw(self):
-    pygame.draw.rect(screen, (200, 200, 200), 
+    pygame.draw.rect(screen, ('red'), 
         (self.rect_x, self.rect_y, self.rect_width, self.rect_height))     
-    self.font.render_to(screen, (self.rect_x, self.rect_y), self.text, (0, 0, 0))
+    self.font.render_to(screen, (self.rect_x + 7, self.rect_y + 12), self.text, (0, 0, 0))
 
 def main():
   currentWord = generateWord()
+  bgColour = 'blue'
   running = True
   while running:
-      screen.fill('blue')
-      head = Hitbox(10, 10, 25 + (10 * len(currentWord)), 50, currentWord)
+      screen.fill(bgColour)
+      head = Hitbox(10, 10, 25 + (14 * len(currentWord)), 50, currentWord)
       head.draw()
       pygame.display.flip()
       
@@ -35,12 +37,10 @@ def main():
 
       if inputText == currentWord:
         currentWord = ''
-        print("Correct!")
         currentWord = generateWord()
         
       elif inputText != currentWord:
         currentWord =''
-        print("Loser")
         currentWord = generateWord()
    
 
