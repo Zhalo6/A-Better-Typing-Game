@@ -1,12 +1,10 @@
 import random
 
-
-
 def generateWord():
 
   generate = True
   
-  if generate == True:
+  if generate:
     
     with open("wordlist.txt", "r") as file: 
       allText = file.read()
