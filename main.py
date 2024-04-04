@@ -4,9 +4,11 @@ from randomWordGen import *
 from randomNumberGen import *
 
 pygame.init()
-screen = pygame.display.set_mode((1000, 800))
+screenWidth = 1000
+screenHeight = 800
+screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption('Monster Hunter')
-speed = 100
+speed = 1000
 tick = pygame.USEREVENT
 pygame.time.set_timer(tick, speed)
 
@@ -36,6 +38,8 @@ screen.fill(bgColour)
 startClock = 1
 currentTime = 10
 
+user_text = '' 
+
 positionOne = (10, 10)
 positionTwo = (250, 10)
 positionThree = (500, 10)
@@ -50,38 +54,15 @@ def newWords():
   return currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5
   
 running = True
+
 currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5 = newWords()
 
+user_text = ''
+inputtext = ''
+textInputted = False
+font = pygame.freetype.SysFont('Arial', 25)
+
 while running:
-
-
-  hitbox = Hitbox(10, 10, 25 + (14 * len(currentWord)), 50, currentWord)
-  fakeHitbox1 = fakeHitbox(250, 10, 25 + (14 * len(fakeWord)), 50, fakeWord)
-  fakeHitbox2 = fakeHitbox(500, 10, 25 + (14 * len(fakeWord2)), 50, fakeWord2)
-  fakeHitbox3 = fakeHitbox(10, 200, 25 + (14 * len(fakeWord3)), 50, fakeWord3)
-  fakeHitbox4 = fakeHitbox(250, 200, 25 + (14 * len(fakeWord4)), 50, fakeWord4)
-  fakeHitbox5 = fakeHitbox(500, 200, 25 + (14 * len(fakeWord5)), 50, fakeWord5)
-    
-  hitbox.draw()
-  fakeHitbox1.draw()
-  fakeHitbox2.draw()
-  fakeHitbox3.draw()
-  fakeHitbox4.draw()
-  fakeHitbox5.draw()
-  
-  pygame.display.flip()
-
-  # inputText = input()
-
-  # if inputText == currentWord:
-  #   print("Correct!")
-  #   randomNumber = generateNum()
-  #   currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5 = newWords()
-    
-  # elif inputText != currentWord:
-  #   print("?")
-  #   randomNumber = generateNum()
-  #   currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5 = newWords()
 
   for event in pygame.event.get():
     if event.type == pygame.USEREVENT:
@@ -91,6 +72,55 @@ while running:
       if currentTime < 0:
         print("Time's up!")
         running = False
+
+    if event.type == pygame.KEYDOWN:         
+      if event.key == pygame.K_BACKSPACE: 
+          user_text = user_text[:-1] 
+      elif event.key == pygame.K_RETURN: 
+        print(user_text)
+        inputtext = user_text
+        user_text = ''
+        textInputted = True
+      else: 
+          user_text += event.unicode
+
+  hitbox = Hitbox(10, 10, 25 + (14 * len(currentWord)), 50, currentWord)
+  fakeHitbox1 = fakeHitbox(250, 10, 25 + (14 * len(fakeWord)), 50, fakeWord)
+  fakeHitbox2 = fakeHitbox(500, 10, 25 + (14 * len(fakeWord2)), 50, fakeWord2)
+  fakeHitbox3 = fakeHitbox(10, 200, 25 + (14 * len(fakeWord3)), 50, fakeWord3)
+  fakeHitbox4 = fakeHitbox(250, 200, 25 + (14 * len(fakeWord4)), 50, fakeWord4)
+  fakeHitbox5 = fakeHitbox(500, 200, 25 + (14 * len(fakeWord5)), 50, fakeWord5)
+
+  pygame.draw.rect(screen, bgColour, (0, 0, screenWidth, screenHeight))   
+  hitbox.draw()
+  fakeHitbox1.draw()
+  fakeHitbox2.draw()
+  fakeHitbox3.draw()
+  fakeHitbox4.draw()
+  fakeHitbox5.draw()
+
+  font.render_to(screen, (screenWidth // 2, screenHeight - 200), user_text, ('white'))
+  
+  pygame.display.flip()
+
+
+  if textInputted == True:
+    if inputtext == currentWord:
+      print("Correct!")
+      randomNumber = generateNum()
+      currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5 = newWords()
+      inputtext = ''
+      currentTime = 10
+      textInputted = False
+      
+    elif inputtext != currentWord:
+      print("?")
+      randomNumber = generateNum()
+      currentWord, fakeWord, fakeWord2, fakeWord3, fakeWord4, fakeWord5 = newWords()
+      inputtext = ''
+      textInputted = False
+
+
    
   
   
