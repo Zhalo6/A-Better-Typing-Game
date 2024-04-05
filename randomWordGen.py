@@ -1,15 +1,10 @@
 import random
 
 def generateWord():
-
-  generate = True
-  
-  if generate:
-    
-    with open("wordlist.txt", "r") as file: 
-      allText = file.read()
-      words = list(map(str, allText.split()))
-   
-      currentWord = random.choice(words)
-      generate = False
-      return currentWord.lower()
+ 
+  with open("wordlist.txt", "r") as file: 
+    allText = file.read()
+    words = list(map(str, allText.split()))
+ 
+    currentWord = random.choice(words)
+    return currentWord.lower()
