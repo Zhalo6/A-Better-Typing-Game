@@ -6,6 +6,6 @@ def generateNum():
   
   if generate:
   
-    randomNumber = random.randrange(1,6)
+    randomNumber = random.randrange(1,7)
     generate = False
     return randomNumber
