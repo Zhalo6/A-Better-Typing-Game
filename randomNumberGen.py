@@ -1,11 +1,11 @@
 import random
 
-def generateNum():
+def generateNum(max):
 
   generate = True
   
   if generate:
   
-    randomNumber = random.randrange(1,7)
+    randomNumber = random.randrange(0, max)
     generate = False
     return randomNumber
