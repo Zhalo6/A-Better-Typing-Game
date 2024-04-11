@@ -2,6 +2,7 @@ import pygame
 from randomWordGen import *
 from randomNumberGen import *
 
+initWords()
 pygame.init()
 screenWidth = 1000
 screenHeight = 800
@@ -14,14 +15,16 @@ activeColour = 'orange'
 colour = 'gray'
 
 class Hitbox(object):
-  def __init__(self, colour, position, rect_width, rect_height):
+  def __init__(self, colour, position, rect_width, rect_height, activeState):
     self.colour = colour
     self.rect_x = position[0]
     self.rect_y = position[1]
+    self.updateWord()
     self.rect_width = rect_width
     self.rect_height = rect_height   
-    self.updateWord()
+    self.activeState = activeState
     self.font = pygame.freetype.SysFont('Arial', 15)
+
 
   def draw(self):
     pygame.draw.rect(screen, self.colour, 
@@ -33,30 +36,33 @@ class Hitbox(object):
 
 bgColour = 'blue'
 screen.fill(bgColour)
-currentTime = 10
+currentTime = 100
 running = True
-startmenu = True
-maingameplay = False
 
-position1 = (10, 10)
-position2 = (250, 10)
-position3 = (500, 10)
-position4 = (10, 250)
-position5 = (250, 250)
-position6 = (500, 250)
+health = 600
+timeIncrease = 3
+
+position1 = (160, 200)
+position2 = (400, 200)
+position3 = (650, 200)
+position4 = (160, 450)
+position5 = (400, 450)
+position6 = (650, 450)
 
 userText = ''
 inputtext = ''
 textInputted = False
 font = pygame.freetype.SysFont('Arial', 25)
+mainscreentitle = 'Monster Hunter'
 
-hitbox = Hitbox(colour, position1, 100, 50)
+hitbox = Hitbox(colour, position1, 100, 50, False)
 hitbox.colour = activeColour
-fakeHitbox1 = Hitbox(colour, position2, 100, 50)
-fakeHitbox2 = Hitbox(colour, position3, 100, 50)
-fakeHitbox3 = Hitbox(colour, position4, 100, 50)
-fakeHitbox4 = Hitbox(colour, position5, 100, 50)
-fakeHitbox5 = Hitbox(colour, position6, 100, 50)
+hitbox.activeState = True
+fakeHitbox1 = Hitbox(colour, position2, 100, 50, False)
+fakeHitbox2 = Hitbox(colour, position3, 100, 50, False)
+fakeHitbox3 = Hitbox(colour, position4, 100, 50, False)
+fakeHitbox4 = Hitbox(colour, position5, 100, 50, False)
+fakeHitbox5 = Hitbox(colour, position6, 100, 50, False)
 allHitboxes = [hitbox, fakeHitbox1, fakeHitbox2, fakeHitbox3, fakeHitbox4, fakeHitbox5]
 
 def newWords():
@@ -65,11 +71,23 @@ def newWords():
 
 def newPositions():
   generateNum(len(allHitboxes))
-  print(randomNumber)
   for i in allHitboxes:
-      i.colour = colour
-      allHitboxes[randomNumber].colour = activeColour
+    i.colour = colour
+    i.activeState = False    
+  allHitboxes[randomNumber].colour = activeColour
+  allHitboxes[randomNumber].activeState = True
 
+running = False
+
+while not running:  
+  screen.fill('black')
+  mainscreen = font.get_rect(mainscreentitle, size = 50)
+  mainscreen.center = (screenWidth // 2, 50)
+  font.render_to(screen, mainscreen,  mainscreentitle, "white", size = 50)
+  pygame.display.flip()
+  for e in pygame.event.get():
+    if e.type == pygame.MOUSEBUTTONDOWN:
+      running = True
    
 while running:
 
@@ -88,15 +106,15 @@ while running:
         userText = ''
         textInputted = True
       else: 
-          userText += event.unicode
+        userText += event.unicode
 
-  pygame.draw.rect(screen, bgColour, (0, 0, screenWidth, screenHeight))   
-  hitbox.draw()
-  fakeHitbox1.draw()
-  fakeHitbox2.draw()
-  fakeHitbox3.draw()
-  fakeHitbox4.draw()
-  fakeHitbox5.draw()
+  screen.fill("blue")
+  for i in allHitboxes:
+    i.draw()
+
+  healthRect = pygame.Rect(screenWidth // 2, 50, health, 50)
+  healthRect.center = (screenWidth // 2, 50)
+  pygame.draw.rect(screen, 'red', healthRect, 100)
 
   textRect = font.get_rect(userText, size = 50)
   textRect.center = (screenWidth // 2, screenHeight - 200)
@@ -108,21 +126,30 @@ while running:
   
   pygame.display.flip()
 
-  if textInputted == True:
-    if inputtext == hitbox.text:
-      randomNumber = generateNum(len(allHitboxes))
-      newWords()
-      newPositions()
-      inputtext = ''
-      currentTime = 10
-      textInputted = False
+  if textInputted:
+    for i in allHitboxes:
+      if i.activeState and inputtext == i.text:
+        randomNumber = generateNum(len(allHitboxes))
+        newWords()
+        newPositions()
+        inputtext = ''
+        currentTime += timeIncrease
+        textInputted = False
+        health -= 60
+        break
       
-    elif inputtext != hitbox.text:
-      randomNumber = generateNum(len(allHitboxes))
-      newWords()
-      newPositions()
-      inputtext = ''
-      textInputted = False
+      if i.activeState and inputtext != i.text:
+        randomNumber = generateNum(len(allHitboxes))
+        newWords()
+        newPositions()
+        inputtext = ''
+        textInputted = False
+        break
+    
+
+    
+   
+  
 
 
    
