@@ -34,6 +34,20 @@ class Hitbox(object):
   def updateWord(self):
     self.text = generateWord()
 
+class textBoxCreation(object):
+  def __init__(self, text, size, xPos, yPos, colour, drawlocation):
+    self.text = text
+    self.size = size
+    self.xPos = xPos
+    self.yPos = yPos
+    self.colour = colour
+    self.drawlocation = drawlocation
+
+  def draw(self):
+    self.name = font.get_rect(self.text, size = self.size)
+    self.name.center = (self.xPos, self.yPos)
+    font.render_to(self.drawlocation, self.name, self.text, self.colour, size = self.size)
+
 bgColour = 'blue'
 screen.fill(bgColour)
 titlescreen = True
@@ -121,9 +135,8 @@ while running:
   healthRect.center = (screenWidth // 2, 50)
   pygame.draw.rect(screen, 'red', healthRect, 100)
 
-  textRect = font.get_rect(userText, size = 50)
-  textRect.center = (screenWidth // 2, screenHeight - 200)
-  font.render_to(screen, textRect, userText, "white", size = 50)
+  inputTextRect = textBoxCreation(userText, 50, screenWidth // 2, screenHeight - 200, "white", screen)
+  inputTextRect.draw()
 
   timerRect = font.get_rect(str(currentTime), size = 50)
   timerRect.center = (screenWidth - 50, screenHeight - 750)
