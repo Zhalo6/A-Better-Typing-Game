@@ -15,20 +15,20 @@ activeColour = 'orange'
 colour = 'gray'
 
 class Hitbox(object):
-  def __init__(self, colour, position, rect_width, rect_height, activeState):
+  def __init__(self, colour, position, rect_screenWidth, rect_screenHeight, activeState):
     self.colour = colour
     self.rect_x = position[0]
     self.rect_y = position[1]
     self.updateWord()
-    self.rect_width = rect_width
-    self.rect_height = rect_height   
+    self.rect_screenWidth = rect_screenWidth
+    self.rect_screenHeight = rect_screenHeight   
     self.activeState = activeState
     self.font = pygame.freetype.SysFont('Arial', 15)
 
 
   def draw(self):
     pygame.draw.rect(screen, self.colour, 
-        (self.rect_x, self.rect_y, self.rect_width, self.rect_height))     
+        (self.rect_x, self.rect_y, self.rect_screenWidth, self.rect_screenHeight))     
     self.font.render_to(screen, (self.rect_x + 12.5, self.rect_y + 15), self.text, (0, 0, 0))
 
   def updateWord(self):
@@ -36,11 +36,15 @@ class Hitbox(object):
 
 bgColour = 'blue'
 screen.fill(bgColour)
-currentTime = 100
-running = True
+titlescreen = True
+running = False
+endscreen = False
 
+difficulty = 2
+currentTime = 30 // difficulty
 health = 600
-timeIncrease = 3
+healthdrain = (health // (10 * difficulty))
+timeIncrease = (3 * difficulty)
 
 position1 = (160, 200)
 position2 = (400, 200)
@@ -79,15 +83,16 @@ def newPositions():
 
 running = False
 
-while not running:  
+while titlescreen:  
   screen.fill('black')
   mainscreen = font.get_rect(mainscreentitle, size = 50)
   mainscreen.center = (screenWidth // 2, 50)
   font.render_to(screen, mainscreen,  mainscreentitle, "white", size = 50)
   pygame.display.flip()
-  for e in pygame.event.get():
-    if e.type == pygame.MOUSEBUTTONDOWN:
-      running = True
+  for event in pygame.event.get():
+      if event.type == pygame.MOUSEBUTTONDOWN:
+          titlescreen = False
+          running = True
    
 while running:
 
@@ -95,7 +100,7 @@ while running:
     if event.type == pygame.USEREVENT:
       if event.type == tick:
           currentTime = currentTime - 1
-      if currentTime == 0:
+      if currentTime <= 0:
         running = False
 
     if event.type == pygame.KEYDOWN:         
@@ -123,6 +128,10 @@ while running:
   timerRect = font.get_rect(str(currentTime), size = 50)
   timerRect.center = (screenWidth - 50, screenHeight - 750)
   font.render_to(screen, timerRect, str(currentTime), "white", size = 50)
+
+  if (health <= 0):
+    running = False
+    endscreen = True
   
   pygame.display.flip()
 
@@ -133,9 +142,10 @@ while running:
         newWords()
         newPositions()
         inputtext = ''
-        currentTime += timeIncrease
         textInputted = False
-        health -= 60
+        currentTime += (timeIncrease + (currentTime // 30))
+        health -= healthdrain
+        print(health)
         break
       
       if i.activeState and inputtext != i.text:
@@ -144,15 +154,13 @@ while running:
         newPositions()
         inputtext = ''
         textInputted = False
+        currentTime -= (timeIncrease + (currentTime // 3))
         break
-    
 
-    
-   
-  
-
-
-   
-  
-  
-  
+while endscreen:
+  screen.fill('black')
+  endscreenText = 'You Win!'
+  endscreenRect = font.get_rect(endscreenText, size = 50)
+  endscreenRect.center = (screenWidth // 2, screenHeight // 2)
+  font.render_to(screen, endscreenRect, endscreenText, "white", size = 50)
+  pygame.display.flip()
